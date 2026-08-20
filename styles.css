@@ -35,6 +35,7 @@ body {
   min-height: 100vh;
   background: #e9edf5;
   color: var(--text);
+  touch-action: manipulation;
 }
 
 button,
@@ -140,6 +141,22 @@ select:focus-visible {
   border-radius: 24px;
   background: var(--surface);
   box-shadow: var(--shadow);
+}
+
+.balance-month-navigation {
+  margin-bottom: 10px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.balance-tag-filter-row {
+  margin-top: 0;
+}
+
+.balance-summary-card {
+  margin-top: 0;
 }
 
 .summary-heading,
@@ -676,7 +693,7 @@ select:focus-visible {
   bottom: 0;
   left: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   width: min(100%, 480px);
   margin: 0 auto;
   padding: 9px 74px calc(9px + env(safe-area-inset-bottom)) 8px;
@@ -684,6 +701,126 @@ select:focus-visible {
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 -8px 30px rgba(31, 43, 67, 0.06);
   backdrop-filter: blur(18px);
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: calc(9px + env(safe-area-inset-top)) 14px 6px;
+  }
+
+  .app-header .eyebrow {
+    display: none;
+  }
+
+  .app-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .icon-button {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+  }
+
+  .view {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .calendar-card {
+    padding: 5px 4px;
+    border-radius: 18px;
+  }
+
+  .month-navigation {
+    grid-template-columns: 40px 1fr 40px;
+    margin-bottom: 1px;
+  }
+
+  .month-button {
+    min-height: 36px;
+    font-size: 1.5rem;
+  }
+
+  .month-title-button {
+    padding: 2px;
+  }
+
+  .weekday-grid span {
+    padding: 2px 0 3px;
+  }
+
+  .calendar-day {
+    min-height: 39px;
+    gap: 1px;
+    padding: 2px 1px;
+    border-radius: 10px;
+  }
+
+  .tag-filter-row {
+    gap: 6px;
+    margin: 7px -10px 6px;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .tag-chip {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+
+  .calendar-day-section {
+    margin-top: 6px;
+    padding: 9px 11px;
+    border-radius: 17px;
+  }
+
+  .calendar-day-section .section-heading {
+    margin-bottom: 3px;
+  }
+
+  .calendar-day-section .section-kicker {
+    margin-bottom: 1px;
+    font-size: 0.58rem;
+  }
+
+  .calendar-day-section .section-heading h3 {
+    font-size: 0.9rem;
+  }
+
+  .calendar-day-section .day-total {
+    font-size: 0.9rem;
+  }
+
+  .calendar-day-section .record-list {
+    max-height: 76px;
+    overflow-y: auto;
+  }
+
+  .calendar-day-section .record-card {
+    padding: 7px 9px;
+    border-radius: 12px;
+  }
+
+  .calendar-day-section .empty-state {
+    gap: 1px;
+    padding: 5px 4px 2px;
+  }
+
+  .calendar-day-section .empty-state p {
+    display: none;
+  }
+
+  .calendar-day-section .text-button {
+    margin-top: 2px;
+    padding: 5px;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
 }
 
 .nav-button {
@@ -1143,7 +1280,7 @@ body.has-modal {
   }
 
   .calendar-day {
-    min-height: 50px;
+    min-height: 38px;
   }
 
   .form-grid.two-columns {

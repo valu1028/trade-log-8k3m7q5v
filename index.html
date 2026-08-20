@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#f5f7fb">
   <meta name="description" content="スキャルピングとスイングの収支を、カレンダーとタグ別に管理する個人用アプリです。">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -47,7 +47,7 @@
 
         <div class="tag-filter-row" id="tag-filter-row" aria-label="タグでカレンダーを絞り込む"></div>
 
-        <section class="day-section" aria-labelledby="selected-date-title">
+        <section class="day-section calendar-day-section" aria-labelledby="selected-date-title">
           <div class="section-heading">
             <div>
               <p class="section-kicker">選択した日</p>
@@ -59,7 +59,26 @@
           <button class="text-button" id="add-for-selected-date" type="button">この日に記録を追加</button>
         </section>
 
-        <section class="summary-card" aria-labelledby="summary-month">
+      </section>
+
+      <section class="view" id="balance-view" data-view="balance" aria-labelledby="balance-heading" hidden>
+        <div class="page-heading">
+          <p class="section-kicker">月間集計</p>
+          <h2 id="balance-heading">収支</h2>
+        </div>
+
+        <div class="month-navigation balance-month-navigation">
+          <button class="month-button" id="balance-previous-month" type="button" aria-label="前の月の収支">‹</button>
+          <button class="month-title-button" id="balance-go-today" type="button" aria-label="今月の収支へ移動">
+            <span id="balance-month-title">2026年8月</span>
+            <small>タップで今月</small>
+          </button>
+          <button class="month-button" id="balance-next-month" type="button" aria-label="次の月の収支">›</button>
+        </div>
+
+        <div class="tag-filter-row balance-tag-filter-row" id="balance-tag-filter-row" aria-label="タグで月間収支を絞り込む"></div>
+
+        <section class="summary-card balance-summary-card" aria-labelledby="summary-month">
           <div class="summary-heading">
             <span id="summary-month">今月の収支</span>
             <span class="summary-filter-label" id="summary-filter-label">すべて</span>
@@ -119,6 +138,9 @@
     <nav class="bottom-navigation" aria-label="メインメニュー">
       <button class="nav-button is-active" type="button" data-target-view="calendar" aria-current="page">
         <span class="nav-icon" aria-hidden="true">▦</span><span>カレンダー</span>
+      </button>
+      <button class="nav-button" type="button" data-target-view="balance">
+        <span class="nav-icon" aria-hidden="true">¥</span><span>収支</span>
       </button>
       <button class="nav-button" type="button" data-target-view="history">
         <span class="nav-icon" aria-hidden="true">≡</span><span>履歴</span>

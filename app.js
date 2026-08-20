@@ -16,13 +16,14 @@ const TAG_COLORS = ["#2563eb", "#7957c8", "#16845b", "#d97706", "#d44747", "#0f8
 
 const elements = {
   calendarMonthTitle: document.querySelector("#calendar-month-title"),
+  balanceMonthTitle: document.querySelector("#balance-month-title"),
   summaryMonth: document.querySelector("#summary-month"),
   summaryFilterLabel: document.querySelector("#summary-filter-label"),
   summaryNet: document.querySelector("#summary-net"),
   summaryInvestment: document.querySelector("#summary-investment"),
   summaryReturn: document.querySelector("#summary-return"),
   tagSummaryGrid: document.querySelector("#tag-summary-grid"),
-  tagFilterRow: document.querySelector("#tag-filter-row"),
+  tagFilterRows: document.querySelectorAll(".tag-filter-row"),
   calendarGrid: document.querySelector("#calendar-grid"),
   selectedDateTitle: document.querySelector("#selected-date-title"),
   selectedDateTotal: document.querySelector("#selected-date-total"),
@@ -134,6 +135,16 @@ function formatSignedYen(value) {
   return "0円";
 }
 
+function formatLossYen(value) {
+  const amount = Math.round(Math.abs(value));
+  return amount > 0 ? `－${formatYen(amount)}` : "0円";
+}
+
+function formatProfitYen(value) {
+  const amount = Math.round(Math.abs(value));
+  return amount > 0 ? `＋${formatYen(amount)}` : "0円";
+}
+
 function formatCalendarSigned(value) {
   const formatted = Math.round(Math.abs(value)).toLocaleString("ja-JP");
   if (value > 0) return `+${formatted}`;
@@ -185,21 +196,23 @@ function createEmptyState(title, description) {
 }
 
 function renderTagFilters() {
-  elements.tagFilterRow.replaceChildren();
   const filterItems = [{ id: "all", name: "すべて" }, ...state.tags];
 
-  filterItems.forEach((tag) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "tag-chip";
-    button.textContent = tag.name;
-    button.setAttribute("aria-pressed", String(state.selectedTagId === tag.id));
-    button.addEventListener("click", () => {
-      state.selectedTagId = tag.id;
-      renderTagFilters();
-      renderCalendarArea();
+  elements.tagFilterRows.forEach((row) => {
+    row.replaceChildren();
+    filterItems.forEach((tag) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "tag-chip";
+      button.textContent = tag.name;
+      button.setAttribute("aria-pressed", String(state.selectedTagId === tag.id));
+      button.addEventListener("click", () => {
+        state.selectedTagId = tag.id;
+        renderTagFilters();
+        renderCalendarArea();
+      });
+      row.append(button);
     });
-    elements.tagFilterRow.append(button);
   });
 }
 
@@ -209,12 +222,15 @@ function renderSummary() {
   const summary = summarize(visibleRecords);
   const selectedTag = state.tags.find((tag) => tag.id === state.selectedTagId);
 
+  elements.balanceMonthTitle.textContent = formatMonth(state.currentMonth);
   elements.summaryMonth.textContent = `${state.currentMonth.getMonth() + 1}月の収支`;
   elements.summaryFilterLabel.textContent = selectedTag?.name || "すべて";
   elements.summaryNet.textContent = formatSignedYen(summary.net);
-  elements.summaryInvestment.textContent = formatYen(summary.investment);
-  elements.summaryReturn.textContent = formatYen(summary.returnAmount);
+  elements.summaryInvestment.textContent = formatLossYen(summary.investment);
+  elements.summaryReturn.textContent = formatProfitYen(summary.returnAmount);
   setSignedClass(elements.summaryNet, summary.net);
+  setSignedClass(elements.summaryInvestment, -summary.investment);
+  setSignedClass(elements.summaryReturn, summary.returnAmount);
 
   elements.tagSummaryGrid.replaceChildren();
   state.tags.forEach((tag) => {
@@ -339,7 +355,7 @@ function createRecordCard(record, { showDate = true } = {}) {
   setSignedClass(net, netAmount);
   const raw = document.createElement("span");
   raw.className = "record-raw";
-  raw.textContent = `損 ${record.investment.toLocaleString("ja-JP")} / 利 ${record.returnAmount.toLocaleString("ja-JP")}`;
+  raw.textContent = `損 ${formatLossYen(record.investment)} / 利 ${formatProfitYen(record.returnAmount)}`;
   amounts.append(net, raw);
 
   button.append(main, amounts);
@@ -376,7 +392,7 @@ function renderHistory() {
   const summary = summarize(records);
   elements.historySummary.replaceChildren(
     createMetricCard("記録", `${summary.count}件`),
-    createMetricCard("損失", formatYen(summary.investment)),
+    createMetricCard("損失", formatLossYen(summary.investment), -summary.investment),
     createMetricCard("収支", formatSignedYen(summary.net), summary.net)
   );
 
@@ -764,23 +780,30 @@ async function refreshData() {
 }
 
 function bindEvents() {
-  document.querySelector("#previous-month").addEventListener("click", () => {
+  const showPreviousMonth = () => {
     state.currentMonth = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth() - 1, 1);
     state.selectedDate = dateKeyForMonth(state.currentMonth, 1);
     renderCalendarArea();
-  });
+  };
 
-  document.querySelector("#next-month").addEventListener("click", () => {
+  const showNextMonth = () => {
     state.currentMonth = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth() + 1, 1);
     state.selectedDate = dateKeyForMonth(state.currentMonth, 1);
     renderCalendarArea();
-  });
+  };
 
-  document.querySelector("#go-today").addEventListener("click", () => {
+  const showCurrentMonth = () => {
     state.currentMonth = firstDayOfMonth(today);
     state.selectedDate = toDateKey(today);
     renderCalendarArea();
-  });
+  };
+
+  document.querySelector("#previous-month").addEventListener("click", showPreviousMonth);
+  document.querySelector("#balance-previous-month").addEventListener("click", showPreviousMonth);
+  document.querySelector("#next-month").addEventListener("click", showNextMonth);
+  document.querySelector("#balance-next-month").addEventListener("click", showNextMonth);
+  document.querySelector("#go-today").addEventListener("click", showCurrentMonth);
+  document.querySelector("#balance-go-today").addEventListener("click", showCurrentMonth);
 
   document.querySelector("#floating-add").addEventListener("click", () => openRecordModal());
   document.querySelector("#add-for-selected-date").addEventListener("click", () => openRecordModal({ date: state.selectedDate }));
