@@ -1,8 +1,8 @@
-const CACHE_NAME = "trade-log-pwa-v7";
+const CACHE_NAME = "trade-log-pwa-v8";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css",
+  "./styles.css?v=8",
   "./app.js",
   "./db.js",
   "./manifest.webmanifest",

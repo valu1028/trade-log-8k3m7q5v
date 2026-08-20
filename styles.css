@@ -935,6 +935,11 @@ select:focus-visible {
   select {
     font-size: 16px;
   }
+
+  .form-grid.two-columns.record-meta-fields {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
 }
 
 .nav-button {
