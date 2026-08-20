@@ -105,6 +105,16 @@
           <p class="section-kicker">月ごとの記録</p>
           <h2 id="history-heading">履歴</h2>
         </div>
+
+        <div class="month-navigation balance-month-navigation history-month-navigation">
+          <button class="month-button" id="history-previous-month" type="button" aria-label="前の月の履歴">‹</button>
+          <button class="month-title-button" id="history-go-today" type="button" aria-label="今月の履歴へ移動">
+            <span id="history-month-title">2026年8月</span>
+            <small>タップで今月</small>
+          </button>
+          <button class="month-button" id="history-next-month" type="button" aria-label="次の月の履歴">›</button>
+        </div>
+
         <div class="history-list" id="history-list"></div>
       </section>
 
@@ -264,6 +274,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="./app.js"></script>
+  <script type="module" src="./app.js?v=9"></script>
 </body>
 </html>

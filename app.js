@@ -19,6 +19,7 @@ const elements = {
   headerTagFilterRow: document.querySelector("#tag-filter-row"),
   calendarMonthTitle: document.querySelector("#calendar-month-title"),
   balanceMonthTitle: document.querySelector("#balance-month-title"),
+  historyMonthTitle: document.querySelector("#history-month-title"),
   summaryMonth: document.querySelector("#summary-month"),
   summaryFilterLabel: document.querySelector("#summary-filter-label"),
   summaryNet: document.querySelector("#summary-net"),
@@ -394,47 +395,42 @@ function renderCalendarArea() {
 }
 
 function renderHistory() {
-  const records = [...state.records].sort((a, b) => b.date.localeCompare(a.date) || b.updatedAt.localeCompare(a.updatedAt));
+  const records = monthRecords()
+    .sort((a, b) => b.date.localeCompare(a.date) || b.updatedAt.localeCompare(a.updatedAt));
+  const year = state.currentMonth.getFullYear();
+  const month = state.currentMonth.getMonth() + 1;
+  const monthKey = `${year}-${String(month).padStart(2, "0")}`;
+  const summary = summarize(records);
+
+  elements.historyMonthTitle.textContent = formatMonth(state.currentMonth);
   elements.historyList.replaceChildren();
+  const section = document.createElement("section");
+  section.className = "history-month-section";
+
+  const heading = document.createElement("h3");
+  heading.id = `history-month-${monthKey}`;
+  heading.textContent = `${year}年${month}月`;
+  section.setAttribute("aria-labelledby", heading.id);
+
+  const metrics = document.createElement("div");
+  metrics.className = "history-month-summary";
+  metrics.append(
+    createMetricCard("記録", `${summary.count}件`),
+    createMetricCard("損失", formatLossYen(summary.investment), -summary.investment),
+    createMetricCard("利益", formatProfitYen(summary.returnAmount), summary.returnAmount),
+    createMetricCard("収支", formatSignedYen(summary.net), summary.net)
+  );
+
+  const recordList = document.createElement("div");
+  recordList.className = "record-list history-month-records";
   if (records.length === 0) {
-    elements.historyList.append(createEmptyState("まだ記録がありません", "カレンダーの＋ボタンから最初の収支を追加しましょう。"));
-    return;
+    recordList.append(createEmptyState("この月の記録はありません", "前後の月を選ぶか、カレンダーの＋ボタンから記録を追加しましょう。"));
+  } else {
+    records.forEach((record) => recordList.append(createRecordCard(record)));
   }
 
-  const monthlyRecords = new Map();
-  records.forEach((record) => {
-    const monthKey = record.date.slice(0, 7);
-    if (!monthlyRecords.has(monthKey)) monthlyRecords.set(monthKey, []);
-    monthlyRecords.get(monthKey).push(record);
-  });
-
-  monthlyRecords.forEach((recordsForMonth, monthKey) => {
-    const [year, month] = monthKey.split("-").map(Number);
-    const summary = summarize(recordsForMonth);
-    const section = document.createElement("section");
-    section.className = "history-month-section";
-
-    const heading = document.createElement("h3");
-    heading.id = `history-month-${monthKey}`;
-    heading.textContent = `${year}年${month}月`;
-    section.setAttribute("aria-labelledby", heading.id);
-
-    const metrics = document.createElement("div");
-    metrics.className = "history-month-summary";
-    metrics.append(
-      createMetricCard("記録", `${summary.count}件`),
-      createMetricCard("損失", formatLossYen(summary.investment), -summary.investment),
-      createMetricCard("利益", formatProfitYen(summary.returnAmount), summary.returnAmount),
-      createMetricCard("収支", formatSignedYen(summary.net), summary.net)
-    );
-
-    const recordList = document.createElement("div");
-    recordList.className = "record-list history-month-records";
-    recordsForMonth.forEach((record) => recordList.append(createRecordCard(record)));
-
-    section.append(heading, metrics, recordList);
-    elements.historyList.append(section);
-  });
+  section.append(heading, metrics, recordList);
+  elements.historyList.append(section);
 }
 
 function createMetricCard(label, value, signedValue = null) {
@@ -816,30 +812,39 @@ async function refreshData() {
 }
 
 function bindEvents() {
+  const renderSelectedMonth = () => {
+    renderCalendarArea();
+    renderHistory();
+    renderAnalysis();
+  };
+
   const showPreviousMonth = () => {
     state.currentMonth = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth() - 1, 1);
     state.selectedDate = dateKeyForMonth(state.currentMonth, 1);
-    renderCalendarArea();
+    renderSelectedMonth();
   };
 
   const showNextMonth = () => {
     state.currentMonth = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth() + 1, 1);
     state.selectedDate = dateKeyForMonth(state.currentMonth, 1);
-    renderCalendarArea();
+    renderSelectedMonth();
   };
 
   const showCurrentMonth = () => {
     state.currentMonth = firstDayOfMonth(today);
     state.selectedDate = toDateKey(today);
-    renderCalendarArea();
+    renderSelectedMonth();
   };
 
   document.querySelector("#previous-month").addEventListener("click", showPreviousMonth);
   document.querySelector("#balance-previous-month").addEventListener("click", showPreviousMonth);
+  document.querySelector("#history-previous-month").addEventListener("click", showPreviousMonth);
   document.querySelector("#next-month").addEventListener("click", showNextMonth);
   document.querySelector("#balance-next-month").addEventListener("click", showNextMonth);
+  document.querySelector("#history-next-month").addEventListener("click", showNextMonth);
   document.querySelector("#go-today").addEventListener("click", showCurrentMonth);
   document.querySelector("#balance-go-today").addEventListener("click", showCurrentMonth);
+  document.querySelector("#history-go-today").addEventListener("click", showCurrentMonth);
 
   document.querySelector("#floating-add").addEventListener("click", () => openRecordModal());
   document.querySelector("#add-for-selected-date").addEventListener("click", () => openRecordModal({ date: state.selectedDate }));
