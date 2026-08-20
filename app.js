@@ -134,14 +134,8 @@ function formatSignedYen(value) {
   return "0円";
 }
 
-function formatCompactSigned(value) {
-  const absolute = Math.abs(value);
-  let formatted;
-
-  if (absolute >= 1000000) formatted = `${(absolute / 10000).toFixed(0)}万`;
-  else if (absolute >= 10000) formatted = `${(absolute / 10000).toFixed(1).replace(".0", "")}万`;
-  else formatted = absolute.toLocaleString("ja-JP");
-
+function formatCalendarSigned(value) {
+  const formatted = Math.round(Math.abs(value)).toLocaleString("ja-JP");
   if (value > 0) return `+${formatted}`;
   if (value < 0) return `-${formatted}`;
   return "0";
@@ -283,7 +277,7 @@ function renderCalendar() {
     if (dailyTotals.has(dateKey)) {
       const dayNet = document.createElement("span");
       dayNet.className = "day-net";
-      dayNet.textContent = formatCompactSigned(total);
+      dayNet.textContent = formatCalendarSigned(total);
       setSignedClass(dayNet, total);
       button.append(dayNet);
     }
@@ -593,12 +587,18 @@ function updateNetPreview() {
 async function handleRecordSubmit(event) {
   event.preventDefault();
   elements.recordFormError.textContent = "";
-  const investment = Number(elements.recordInvestment.value);
-  const returnAmount = Number(elements.recordReturn.value);
+  const investmentInput = elements.recordInvestment.value.trim();
+  const returnInput = elements.recordReturn.value.trim();
+  const investment = investmentInput === "" ? 0 : Number(investmentInput);
+  const returnAmount = returnInput === "" ? 0 : Number(returnInput);
   const tagIds = [...elements.recordTagOptions.querySelectorAll('input[type="checkbox"]:checked')].map((input) => input.value);
 
   if (!elements.recordDate.value) {
     elements.recordFormError.textContent = "日付を入力してください。";
+    return;
+  }
+  if (investmentInput === "" && returnInput === "") {
+    elements.recordFormError.textContent = "損失または利益のどちらかを入力してください。";
     return;
   }
   if (!Number.isFinite(investment) || !Number.isFinite(returnAmount) || investment < 0 || returnAmount < 0) {
