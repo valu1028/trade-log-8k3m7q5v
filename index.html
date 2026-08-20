@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f7fb">
+  <meta name="description" content="スキャルピングとスイングの収支を、カレンダーとタグ別に管理する個人用アプリです。">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="収支カレンダー">
+  <title>Trade Log｜収支カレンダー</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">PERSONAL TRADING JOURNAL</p>
+        <h1>Trade Log</h1>
+      </div>
+      <button class="icon-button" id="open-settings" type="button" aria-label="設定を開く">
+        <span aria-hidden="true">⚙︎</span>
+      </button>
+    </header>
+
+    <main>
+      <section class="view is-active" id="calendar-view" data-view="calendar" aria-labelledby="calendar-heading">
+        <h2 class="sr-only" id="calendar-heading">収支カレンダー</h2>
+
+        <section class="calendar-card">
+          <div class="month-navigation">
+            <button class="month-button" id="previous-month" type="button" aria-label="前の月">‹</button>
+            <button class="month-title-button" id="go-today" type="button" aria-label="今月へ移動">
+              <span id="calendar-month-title">2026年8月</span>
+              <small>タップで今月</small>
+            </button>
+            <button class="month-button" id="next-month" type="button" aria-label="次の月">›</button>
+          </div>
+          <div class="weekday-grid" aria-hidden="true">
+            <span class="sunday">日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span class="saturday">土</span>
+          </div>
+          <div class="calendar-grid" id="calendar-grid"></div>
+        </section>
+
+        <div class="tag-filter-row" id="tag-filter-row" aria-label="タグでカレンダーを絞り込む"></div>
+
+        <section class="day-section" aria-labelledby="selected-date-title">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">選択した日</p>
+              <h3 id="selected-date-title">今日</h3>
+            </div>
+            <strong class="day-total is-zero" id="selected-date-total">0円</strong>
+          </div>
+          <div class="record-list" id="selected-date-records"></div>
+          <button class="text-button" id="add-for-selected-date" type="button">この日に記録を追加</button>
+        </section>
+
+        <section class="summary-card" aria-labelledby="summary-month">
+          <div class="summary-heading">
+            <span id="summary-month">今月の収支</span>
+            <span class="summary-filter-label" id="summary-filter-label">すべて</span>
+          </div>
+          <p class="summary-net is-zero" id="summary-net">0円</p>
+          <div class="summary-details">
+            <div>
+              <span>損失</span>
+              <strong id="summary-investment">0円</strong>
+            </div>
+            <div>
+              <span>利益</span>
+              <strong id="summary-return">0円</strong>
+            </div>
+          </div>
+          <div class="tag-summary-grid" id="tag-summary-grid" aria-label="タグ別の月間収支"></div>
+        </section>
+      </section>
+
+      <section class="view" id="history-view" data-view="history" aria-labelledby="history-heading" hidden>
+        <div class="page-heading">
+          <p class="section-kicker">すべての記録</p>
+          <h2 id="history-heading">履歴</h2>
+        </div>
+        <div class="history-summary" id="history-summary"></div>
+        <div class="record-list history-list" id="history-list"></div>
+      </section>
+
+      <section class="view" id="analysis-view" data-view="analysis" aria-labelledby="analysis-heading" hidden>
+        <div class="page-heading analysis-heading-row">
+          <div>
+            <p class="section-kicker">パフォーマンス</p>
+            <h2 id="analysis-heading">分析</h2>
+          </div>
+          <label class="compact-field">
+            <span class="sr-only">分析期間</span>
+            <select id="analysis-period">
+              <option value="month">表示中の月</option>
+              <option value="all">全期間</option>
+            </select>
+          </label>
+        </div>
+        <section class="analysis-overview" id="analysis-overview"></section>
+        <section class="analysis-section" aria-labelledby="tag-analysis-heading">
+          <div class="section-heading compact">
+            <div>
+              <p class="section-kicker">タグ別</p>
+              <h3 id="tag-analysis-heading">収支内訳</h3>
+            </div>
+          </div>
+          <p class="helper-text">複数タグを付けた記録は、それぞれのタグ集計に全額含まれます。</p>
+          <div class="analysis-tag-list" id="analysis-tag-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <nav class="bottom-navigation" aria-label="メインメニュー">
+      <button class="nav-button is-active" type="button" data-target-view="calendar" aria-current="page">
+        <span class="nav-icon" aria-hidden="true">▦</span><span>カレンダー</span>
+      </button>
+      <button class="nav-button" type="button" data-target-view="history">
+        <span class="nav-icon" aria-hidden="true">≡</span><span>履歴</span>
+      </button>
+      <button class="nav-button" type="button" data-target-view="analysis">
+        <span class="nav-icon" aria-hidden="true">⌁</span><span>分析</span>
+      </button>
+    </nav>
+
+    <button class="floating-add-button" id="floating-add" type="button" aria-label="収支を追加">＋</button>
+  </div>
+
+  <div class="modal-backdrop" id="record-modal" aria-hidden="true">
+    <section class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="record-modal-title">
+      <div class="modal-handle" aria-hidden="true"></div>
+      <div class="modal-heading">
+        <button class="modal-cancel" id="close-record-modal" type="button">キャンセル</button>
+        <h2 id="record-modal-title">収支を追加</h2>
+        <span class="modal-heading-spacer" aria-hidden="true"></span>
+      </div>
+
+      <form id="record-form">
+        <input type="hidden" id="record-id">
+        <div class="form-grid two-columns">
+          <label class="form-field">
+            <span>日付</span>
+            <input id="record-date" type="date" required>
+          </label>
+          <label class="form-field">
+            <span>タイトル <small>任意</small></span>
+            <input id="record-title" type="text" maxlength="40" placeholder="例：朝のトレード">
+          </label>
+        </div>
+
+        <div class="form-grid two-columns amount-fields">
+          <label class="form-field">
+            <span>損失</span>
+            <div class="amount-input"><input id="record-investment" type="number" min="0" step="1" inputmode="numeric" placeholder="0" required><span>円</span></div>
+          </label>
+          <label class="form-field">
+            <span>利益</span>
+            <div class="amount-input"><input id="record-return" type="number" min="0" step="1" inputmode="numeric" placeholder="0" required><span>円</span></div>
+          </label>
+        </div>
+
+        <div class="net-preview is-zero" id="record-net-preview">
+          <span>収支</span><strong>0円</strong>
+        </div>
+
+        <fieldset class="tag-fieldset">
+          <legend>タグ <small>任意</small></legend>
+          <div class="tag-checkbox-grid" id="record-tag-options"></div>
+        </fieldset>
+
+        <label class="form-field">
+          <span>メモ <small>任意</small></span>
+          <textarea id="record-note" rows="3" maxlength="300" placeholder="エントリー理由や振り返りなど"></textarea>
+        </label>
+
+        <p class="form-error" id="record-form-error" role="alert"></p>
+        <button class="primary-button" id="save-record" type="submit">保存する</button>
+        <button class="danger-button" id="delete-record" type="button" hidden>この記録を削除</button>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="settings-modal" aria-hidden="true">
+    <section class="modal-sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div class="modal-handle" aria-hidden="true"></div>
+      <div class="modal-heading">
+        <button class="modal-cancel" id="close-settings-modal" type="button">閉じる</button>
+        <h2 id="settings-title">設定</h2>
+        <span class="modal-heading-spacer" aria-hidden="true"></span>
+      </div>
+
+      <section class="settings-section" aria-labelledby="tag-settings-heading">
+        <div class="settings-section-heading">
+          <div>
+            <p class="section-kicker">分類</p>
+            <h3 id="tag-settings-heading">タグ管理</h3>
+          </div>
+        </div>
+        <div class="settings-tag-list" id="settings-tag-list"></div>
+        <form class="inline-form" id="add-tag-form">
+          <label class="sr-only" for="new-tag-name">新しいタグ名</label>
+          <input id="new-tag-name" type="text" maxlength="20" placeholder="新しいタグ名" required>
+          <button type="submit">追加</button>
+        </form>
+        <p class="form-error" id="tag-form-error" role="alert"></p>
+      </section>
+
+      <section class="settings-section" aria-labelledby="backup-heading">
+        <div class="settings-section-heading">
+          <div>
+            <p class="section-kicker">データ保全</p>
+            <h3 id="backup-heading">バックアップ</h3>
+          </div>
+        </div>
+        <p class="helper-text" id="storage-status">保存状態を確認しています…</p>
+        <div class="settings-actions">
+          <button class="secondary-button" id="export-backup" type="button">JSONを書き出す</button>
+          <label class="secondary-button file-button">
+            JSONを読み込む
+            <input id="import-backup" type="file" accept="application/json,.json">
+          </label>
+        </div>
+        <p class="helper-text" id="last-backup-label">バックアップ履歴はありません。</p>
+      </section>
+
+      <section class="settings-section install-guide" aria-labelledby="install-heading">
+        <div class="settings-section-heading">
+          <div>
+            <p class="section-kicker">iPhone</p>
+            <h3 id="install-heading">ホーム画面に追加</h3>
+          </div>
+        </div>
+        <p>Safariの共有ボタンから「ホーム画面に追加」→「Webアプリとして開く」を選びます。</p>
+      </section>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
