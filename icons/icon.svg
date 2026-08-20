@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Trade Log</title>
+  <desc id="desc">青い背景に白いカレンダーと上向きの収支線</desc>
+  <rect width="512" height="512" rx="112" fill="#2563eb"/>
+  <rect x="94" y="112" width="324" height="292" rx="54" fill="#ffffff"/>
+  <rect x="94" y="112" width="324" height="86" rx="54" fill="#dbe7ff"/>
+  <rect x="94" y="168" width="324" height="30" fill="#dbe7ff"/>
+  <rect x="160" y="78" width="34" height="82" rx="17" fill="#ffffff"/>
+  <rect x="318" y="78" width="34" height="82" rx="17" fill="#ffffff"/>
+  <path d="M144 332L213 271L268 311L367 230" fill="none" stroke="#16845b" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M322 230H367V275" fill="none" stroke="#16845b" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
