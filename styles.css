@@ -89,7 +89,12 @@ select:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   padding: calc(18px + env(safe-area-inset-top)) 20px 12px;
+}
+
+.app-header.is-settings-only {
+  justify-content: flex-end;
 }
 
 .eyebrow,
@@ -286,6 +291,22 @@ select:focus-visible {
 
 .tag-filter-row::-webkit-scrollbar {
   display: none;
+}
+
+.app-header .header-tag-filter-row {
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 6px;
+  margin: 0;
+  padding: 0 2px 2px 0;
+}
+
+.app-header .header-tag-filter-row[hidden] {
+  display: none;
+}
+
+.app-header .header-tag-filter-row .tag-chip {
+  padding: 8px 11px;
 }
 
 .tag-chip {
@@ -788,14 +809,6 @@ select:focus-visible {
     padding: calc(9px + env(safe-area-inset-top)) 14px 6px;
   }
 
-  .app-header .eyebrow {
-    display: none;
-  }
-
-  .app-header h1 {
-    font-size: 1.3rem;
-  }
-
   .icon-button {
     width: 36px;
     height: 36px;
@@ -854,6 +867,11 @@ select:focus-visible {
     margin: 7px -10px 6px;
     padding-right: 10px;
     padding-left: 10px;
+  }
+
+  .app-header .header-tag-filter-row {
+    margin: 0;
+    padding: 0 2px 0 0;
   }
 
   .tag-chip {

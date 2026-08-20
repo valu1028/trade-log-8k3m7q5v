@@ -15,6 +15,8 @@ import {
 const TAG_COLORS = ["#2563eb", "#7957c8", "#16845b", "#d97706", "#d44747", "#0f8191"];
 
 const elements = {
+  appHeader: document.querySelector(".app-header"),
+  headerTagFilterRow: document.querySelector("#tag-filter-row"),
   calendarMonthTitle: document.querySelector("#calendar-month-title"),
   balanceMonthTitle: document.querySelector("#balance-month-title"),
   summaryMonth: document.querySelector("#summary-month"),
@@ -699,6 +701,9 @@ async function handleDeleteRecord() {
 
 function switchView(viewName) {
   state.activeView = viewName;
+  const calendarIsActive = viewName === "calendar";
+  elements.headerTagFilterRow.hidden = !calendarIsActive;
+  elements.appHeader.classList.toggle("is-settings-only", !calendarIsActive);
   document.querySelectorAll(".view").forEach((view) => {
     const active = view.dataset.view === viewName;
     view.hidden = !active;

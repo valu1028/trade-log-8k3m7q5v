@@ -17,10 +17,7 @@
 <body>
   <div class="app-shell">
     <header class="app-header">
-      <div>
-        <p class="eyebrow">PERSONAL TRADING JOURNAL</p>
-        <h1>Trade Log</h1>
-      </div>
+      <div class="tag-filter-row header-tag-filter-row" id="tag-filter-row" aria-label="タグでカレンダーを絞り込む"></div>
       <button class="icon-button" id="open-settings" type="button" aria-label="設定を開く">
         <span aria-hidden="true">⚙︎</span>
       </button>
@@ -44,15 +41,13 @@
           </div>
           <div class="calendar-grid" id="calendar-grid"></div>
           <div class="calendar-card-footer">
-            <button class="calendar-add-button" id="floating-add" type="button" aria-label="選択した日に収支を追加">＋</button>
             <div class="calendar-mini-summary" aria-label="表示中の月の収支">
               <span id="calendar-mini-summary-label">8月収支</span>
               <strong class="is-zero" id="calendar-mini-summary-value">0円</strong>
             </div>
+            <button class="calendar-add-button" id="floating-add" type="button" aria-label="選択した日に収支を追加">＋</button>
           </div>
         </section>
-
-        <div class="tag-filter-row" id="tag-filter-row" aria-label="タグでカレンダーを絞り込む"></div>
 
         <section class="day-section calendar-day-section" aria-labelledby="selected-date-title">
           <div class="section-heading">

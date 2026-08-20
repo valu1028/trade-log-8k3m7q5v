@@ -1,4 +1,4 @@
-const CACHE_NAME = "trade-log-pwa-v6";
+const CACHE_NAME = "trade-log-pwa-v7";
 const APP_SHELL = [
   "./",
   "./index.html",
