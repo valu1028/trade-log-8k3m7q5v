@@ -23,12 +23,13 @@ const elements = {
   summaryInvestment: document.querySelector("#summary-investment"),
   summaryReturn: document.querySelector("#summary-return"),
   tagSummaryGrid: document.querySelector("#tag-summary-grid"),
+  calendarMiniSummaryLabel: document.querySelector("#calendar-mini-summary-label"),
+  calendarMiniSummaryValue: document.querySelector("#calendar-mini-summary-value"),
   tagFilterRows: document.querySelectorAll(".tag-filter-row"),
   calendarGrid: document.querySelector("#calendar-grid"),
   selectedDateTitle: document.querySelector("#selected-date-title"),
   selectedDateTotal: document.querySelector("#selected-date-total"),
   selectedDateRecords: document.querySelector("#selected-date-records"),
-  historySummary: document.querySelector("#history-summary"),
   historyList: document.querySelector("#history-list"),
   analysisPeriod: document.querySelector("#analysis-period"),
   analysisOverview: document.querySelector("#analysis-overview"),
@@ -223,12 +224,15 @@ function renderSummary() {
   const selectedTag = state.tags.find((tag) => tag.id === state.selectedTagId);
 
   elements.balanceMonthTitle.textContent = formatMonth(state.currentMonth);
+  elements.calendarMiniSummaryLabel.textContent = `${state.currentMonth.getMonth() + 1}月収支`;
+  elements.calendarMiniSummaryValue.textContent = formatSignedYen(summary.net);
   elements.summaryMonth.textContent = `${state.currentMonth.getMonth() + 1}月の収支`;
   elements.summaryFilterLabel.textContent = selectedTag?.name || "すべて";
   elements.summaryNet.textContent = formatSignedYen(summary.net);
   elements.summaryInvestment.textContent = formatLossYen(summary.investment);
   elements.summaryReturn.textContent = formatProfitYen(summary.returnAmount);
   setSignedClass(elements.summaryNet, summary.net);
+  setSignedClass(elements.calendarMiniSummaryValue, summary.net);
   setSignedClass(elements.summaryInvestment, -summary.investment);
   setSignedClass(elements.summaryReturn, summary.returnAmount);
 
@@ -389,19 +393,46 @@ function renderCalendarArea() {
 
 function renderHistory() {
   const records = [...state.records].sort((a, b) => b.date.localeCompare(a.date) || b.updatedAt.localeCompare(a.updatedAt));
-  const summary = summarize(records);
-  elements.historySummary.replaceChildren(
-    createMetricCard("記録", `${summary.count}件`),
-    createMetricCard("損失", formatLossYen(summary.investment), -summary.investment),
-    createMetricCard("収支", formatSignedYen(summary.net), summary.net)
-  );
-
   elements.historyList.replaceChildren();
   if (records.length === 0) {
     elements.historyList.append(createEmptyState("まだ記録がありません", "カレンダーの＋ボタンから最初の収支を追加しましょう。"));
     return;
   }
-  records.forEach((record) => elements.historyList.append(createRecordCard(record)));
+
+  const monthlyRecords = new Map();
+  records.forEach((record) => {
+    const monthKey = record.date.slice(0, 7);
+    if (!monthlyRecords.has(monthKey)) monthlyRecords.set(monthKey, []);
+    monthlyRecords.get(monthKey).push(record);
+  });
+
+  monthlyRecords.forEach((recordsForMonth, monthKey) => {
+    const [year, month] = monthKey.split("-").map(Number);
+    const summary = summarize(recordsForMonth);
+    const section = document.createElement("section");
+    section.className = "history-month-section";
+
+    const heading = document.createElement("h3");
+    heading.id = `history-month-${monthKey}`;
+    heading.textContent = `${year}年${month}月`;
+    section.setAttribute("aria-labelledby", heading.id);
+
+    const metrics = document.createElement("div");
+    metrics.className = "history-month-summary";
+    metrics.append(
+      createMetricCard("記録", `${summary.count}件`),
+      createMetricCard("損失", formatLossYen(summary.investment), -summary.investment),
+      createMetricCard("利益", formatProfitYen(summary.returnAmount), summary.returnAmount),
+      createMetricCard("収支", formatSignedYen(summary.net), summary.net)
+    );
+
+    const recordList = document.createElement("div");
+    recordList.className = "record-list history-month-records";
+    recordsForMonth.forEach((record) => recordList.append(createRecordCard(record)));
+
+    section.append(heading, metrics, recordList);
+    elements.historyList.append(section);
+  });
 }
 
 function createMetricCard(label, value, signedValue = null) {

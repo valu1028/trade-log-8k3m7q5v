@@ -314,6 +314,52 @@ select:focus-visible {
   box-shadow: var(--shadow);
 }
 
+.calendar-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 4px 3px 0;
+  padding: 7px 3px 1px;
+  border-top: 1px solid var(--line);
+}
+
+.calendar-add-button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 11px;
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 7px 18px rgba(37, 99, 235, 0.24);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.calendar-mini-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+}
+
+.calendar-mini-summary span {
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 650;
+}
+
+.calendar-mini-summary strong {
+  overflow: hidden;
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .month-navigation {
   display: grid;
   grid-template-columns: 46px 1fr 46px;
@@ -576,12 +622,46 @@ select:focus-visible {
   font-size: 1.65rem;
 }
 
-.history-summary,
 .analysis-overview {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   margin-bottom: 14px;
+}
+
+.history-list {
+  display: grid;
+  gap: 18px;
+}
+
+.history-month-section {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+}
+
+.history-month-section h3 {
+  margin: 0;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.history-month-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.history-month-summary .metric-card {
+  padding: 9px 5px;
+  background: var(--surface-soft);
+}
+
+.history-month-records {
+  gap: 7px;
 }
 
 .metric-card {
@@ -609,7 +689,7 @@ select:focus-visible {
 }
 
 .history-list .record-card {
-  background: var(--surface);
+  background: var(--surface-soft);
 }
 
 .compact-field select {
@@ -696,7 +776,7 @@ select:focus-visible {
   grid-template-columns: repeat(4, 1fr);
   width: min(100%, 480px);
   margin: 0 auto;
-  padding: 9px 74px calc(9px + env(safe-area-inset-bottom)) 8px;
+  padding: 9px 8px calc(9px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 -8px 30px rgba(31, 43, 67, 0.06);
@@ -730,6 +810,18 @@ select:focus-visible {
   .calendar-card {
     padding: 5px 4px;
     border-radius: 18px;
+  }
+
+  .calendar-card-footer {
+    margin-top: 2px;
+    padding-top: 5px;
+  }
+
+  .calendar-add-button {
+    width: 31px;
+    height: 31px;
+    border-radius: 10px;
+    font-size: 1.2rem;
   }
 
   .month-navigation {
@@ -816,6 +908,10 @@ select:focus-visible {
     padding: 5px;
   }
 
+  .history-month-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   input,
   textarea,
   select {
@@ -843,25 +939,6 @@ select:focus-visible {
 .nav-icon {
   font-size: 1.25rem;
   line-height: 1;
-}
-
-.floating-add-button {
-  position: fixed;
-  z-index: 22;
-  right: max(calc((100vw - 480px) / 2 + 16px), 16px);
-  bottom: calc(18px + env(safe-area-inset-bottom));
-  display: grid;
-  width: 54px;
-  height: 54px;
-  place-items: center;
-  border: 0;
-  border-radius: 50%;
-  background: var(--primary);
-  color: #ffffff;
-  box-shadow: 0 10px 26px rgba(37, 99, 235, 0.32);
-  font-size: 1.8rem;
-  line-height: 1;
-  cursor: pointer;
 }
 
 .modal-backdrop {

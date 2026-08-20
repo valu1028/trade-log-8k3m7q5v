@@ -43,6 +43,13 @@
             <span class="sunday">日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span class="saturday">土</span>
           </div>
           <div class="calendar-grid" id="calendar-grid"></div>
+          <div class="calendar-card-footer">
+            <button class="calendar-add-button" id="floating-add" type="button" aria-label="選択した日に収支を追加">＋</button>
+            <div class="calendar-mini-summary" aria-label="表示中の月の収支">
+              <span id="calendar-mini-summary-label">8月収支</span>
+              <strong class="is-zero" id="calendar-mini-summary-value">0円</strong>
+            </div>
+          </div>
         </section>
 
         <div class="tag-filter-row" id="tag-filter-row" aria-label="タグでカレンダーを絞り込む"></div>
@@ -100,11 +107,10 @@
 
       <section class="view" id="history-view" data-view="history" aria-labelledby="history-heading" hidden>
         <div class="page-heading">
-          <p class="section-kicker">すべての記録</p>
+          <p class="section-kicker">月ごとの記録</p>
           <h2 id="history-heading">履歴</h2>
         </div>
-        <div class="history-summary" id="history-summary"></div>
-        <div class="record-list history-list" id="history-list"></div>
+        <div class="history-list" id="history-list"></div>
       </section>
 
       <section class="view" id="analysis-view" data-view="analysis" aria-labelledby="analysis-heading" hidden>
@@ -150,7 +156,6 @@
       </button>
     </nav>
 
-    <button class="floating-add-button" id="floating-add" type="button" aria-label="収支を追加">＋</button>
   </div>
 
   <div class="modal-backdrop" id="record-modal" aria-hidden="true">
