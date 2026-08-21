@@ -564,10 +564,10 @@ function closeModal(modal) {
 
 function renderRecordTagOptions(selectedTagIds) {
   elements.recordTagOptions.replaceChildren();
-  const selected = new Set(selectedTagIds);
+  const selectedTagId = selectedTagIds.find((tagId) => findTag(tagId)) || null;
   const availableTags = [...state.tags];
 
-  selected.forEach((tagId) => {
+  selectedTagIds.forEach((tagId) => {
     const tag = findTag(tagId);
     if (tag && !availableTags.some((item) => item.id === tag.id)) availableTags.push(tag);
   });
@@ -577,10 +577,10 @@ function renderRecordTagOptions(selectedTagIds) {
     label.className = "tag-checkbox";
     label.style.setProperty("--tag-color", safeTagColor(tag));
     const input = document.createElement("input");
-    input.type = "checkbox";
-    input.name = "record-tags";
+    input.type = "radio";
+    input.name = "record-tag";
     input.value = tag.id;
-    input.checked = selected.has(tag.id);
+    input.checked = tag.id === selectedTagId;
     const text = document.createElement("span");
     text.textContent = tag.archived ? `${tag.name}（非表示）` : tag.name;
     label.append(input, text);
@@ -609,9 +609,9 @@ function openRecordModal({ date = state.selectedDate, record = null } = {}) {
 
   let selectedTagIds;
   if (record) {
-    selectedTagIds = record.tagIds;
+    selectedTagIds = record.tagIds.slice(0, 1);
   } else {
-    selectedTagIds = state.lastTagIds.filter((tagId) => state.tags.some((tag) => tag.id === tagId));
+    selectedTagIds = state.lastTagIds.filter((tagId) => state.tags.some((tag) => tag.id === tagId)).slice(0, 1);
     if (selectedTagIds.length === 0) selectedTagIds = state.tags.slice(0, 1).map((tag) => tag.id);
   }
   renderRecordTagOptions(selectedTagIds);
@@ -636,7 +636,8 @@ async function handleRecordSubmit(event) {
   const returnInput = elements.recordReturn.value.trim();
   const investment = investmentInput === "" ? 0 : Number(investmentInput);
   const returnAmount = returnInput === "" ? 0 : Number(returnInput);
-  const tagIds = [...elements.recordTagOptions.querySelectorAll('input[type="checkbox"]:checked')].map((input) => input.value);
+  const selectedTagInput = elements.recordTagOptions.querySelector('input[name="record-tag"]:checked');
+  const tagIds = selectedTagInput ? [selectedTagInput.value] : [];
 
   if (!elements.recordDate.value) {
     elements.recordFormError.textContent = "日付を入力してください。";
